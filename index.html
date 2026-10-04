@@ -6,7 +6,7 @@
   <title>Manifest Kaset Rafı & BMO Player</title>
   <meta name="description" content="Raftan bir manifest kaseti seç veya BMO'ya sürükle bırak. BMO klibi kendi ekranında oynatsın.">
   
-  <!-- Typography & Fonts -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Permanent+Marker&family=Silkscreen&display=swap" rel="stylesheet">
@@ -15,21 +15,22 @@
   <script src="https://www.youtube.com/iframe_api"></script>
 
   <style>
-    /* Global Variables & Reset */
     :root {
-      --bg-color: #f3efe6;
-      --bg-pattern: #e4ddcf;
-      --bmo-body: #6cbda7;
-      --bmo-shadow: #4d9c87;
-      --bmo-dark: #32695a;
-      --bmo-screen: #85d8be;
-      --bmo-yellow: #fadb48;
-      --bmo-red: #e74c3c;
-      --bmo-blue: #3498db;
-      --bmo-green: #2ecc71;
-      --shelf-wood: #a06e40;
-      --shelf-dark: #744d28;
-      --text-main: #2b2b2b;
+      --bg-color: #fbf0f4;
+      --bg-pattern: #f0cbda;
+      --bmo-body: #50bda1;
+      --bmo-shadow: #3b937c;
+      --bmo-dark: #24584a;
+      --bmo-screen: #8ce6ce;
+      --bmo-yellow: #f4c430;
+      --bmo-red: #eb4d4b;
+      --bmo-blue: #2c82c9;
+      --bmo-green: #44bd32;
+      --shelf-wood: #6b4423;
+      --shelf-border: #4d2f17;
+      --shelf-bg: #382110;
+      --text-main: #231c26;
+      --pink-accent: #f05d8f;
       --font-heading: 'Bagel Fat One', cursive, sans-serif;
       --font-body: 'Bricolage Grotesque', sans-serif;
       --font-hand: 'Permanent Marker', cursive;
@@ -46,138 +47,190 @@
 
     body {
       background-color: var(--bg-color);
-      background-image: radial-gradient(var(--bg-pattern) 15%, transparent 16%);
-      background-size: 20px 20px;
+      background-image: radial-gradient(var(--bg-pattern) 18%, transparent 18%);
+      background-size: 18px 18px;
       color: var(--text-main);
       font-family: var(--font-body);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 1.5rem 1rem;
+      padding: 2rem 1.5rem;
       overflow-x: hidden;
     }
 
-    /* Header Styling */
     header.top {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      max-width: 800px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      width: 100%;
+      max-width: 1120px;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
-    header.top .eyebrow {
+    .header-left .eyebrow {
       font-family: var(--font-pixel);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       letter-spacing: 2px;
-      color: #666;
+      color: #887a85;
       text-transform: uppercase;
+      margin-bottom: 2px;
     }
 
-    header.top h1 {
+    .header-left h1 {
+      font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+      color: #231c26;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .header-left h1 span.pink-title {
       font-family: var(--font-heading);
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      color: #2c3e50;
-      text-shadow: 3px 3px 0px #fff, 5px 5px 0px rgba(0,0,0,0.15);
-      line-height: 1.1;
+      color: var(--pink-accent);
+      font-weight: normal;
+      text-shadow: 2px 2px 0px rgba(0,0,0,0.05);
     }
 
-    header.top h1 span {
-      color: var(--bmo-shadow);
-    }
-
-    header.top .lede {
-      margin-top: 0.5rem;
-      font-size: 1rem;
-      color: #555;
+    .header-right {
+      max-width: 380px;
+      font-size: 0.92rem;
+      color: #6d5b68;
       font-weight: 600;
+      line-height: 1.4;
+      text-align: right;
     }
 
-    /* Main Grid Layout */
+    @media (max-width: 800px) {
+      header.top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .header-right {
+        text-align: left;
+      }
+    }
+
     main.app {
       display: flex;
       flex-direction: row;
-      gap: 2rem;
-      max-width: 1200px;
+      gap: 2.5rem;
+      max-width: 1150px;
       width: 100%;
       align-items: flex-start;
       justify-content: center;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 960px) {
       main.app {
         flex-direction: column;
         align-items: center;
       }
     }
 
-    /* BMO Console Container */
+    /* Enlarged BMO Console Container */
     aside.console {
-      width: 360px;
+      width: 410px;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       position: sticky;
-      top: 1rem;
+      top: 1.5rem;
       z-index: 10;
+    }
+
+    @media (max-width: 440px) {
+      aside.console {
+        width: 100%;
+      }
     }
 
     /* BMO Outer Body */
     .bmo {
       position: relative;
-      width: 320px;
+      width: 100%;
       background: var(--bmo-body);
-      border: 5px solid #222;
-      border-radius: 28px;
-      padding: 18px 16px;
-      box-shadow: 0 12px 0 var(--bmo-shadow), 0 20px 25px rgba(0,0,0,0.25);
+      border: 4px solid #1e272e;
+      border-radius: 32px;
+      padding: 22px 20px;
+      box-shadow: 0 14px 0 var(--bmo-shadow), 0 20px 30px rgba(0,0,0,0.12);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    /* Drop Zone Target Highlight */
     .bmo.drag-over {
-      transform: scale(1.03);
+      transform: scale(1.02);
       border-color: #f1c40f;
-      box-shadow: 0 0 25px rgba(241, 196, 15, 0.8), 0 12px 0 var(--bmo-shadow);
-      background: #7bd4bc;
+      box-shadow: 0 0 30px rgba(241, 196, 15, 0.7), 0 14px 0 var(--bmo-shadow);
+      background: #5fd3b4;
     }
 
     /* BMO Limbs */
     .bmo .arm {
       position: absolute;
-      top: 160px;
-      width: 35px;
+      top: 180px;
+      width: 32px;
+      height: 10px;
+      background: var(--bmo-body);
+      border: 3px solid #1e272e;
+      border-radius: 8px;
+    }
+
+    .bmo .arm.l { left: -26px; transform: rotate(-22deg); transform-origin: right center; }
+    .bmo .arm.r { right: -26px; transform: rotate(22deg); transform-origin: left center; }
+
+    .bmo .arm::after {
+      content: '';
+      position: absolute;
+      width: 12px;
       height: 12px;
       background: var(--bmo-body);
-      border: 4px solid #222;
-      border-radius: 10px;
+      border: 3px solid #1e272e;
+      border-radius: 50%;
+      top: -4px;
     }
-    .bmo .arm.l { left: -32px; transform: rotate(-25deg); transform-origin: right center; }
-    .bmo .arm.r { right: -32px; transform: rotate(25deg); transform-origin: left center; }
+    .bmo .arm.l::after { left: -8px; }
+    .bmo .arm.r::after { right: -8px; }
 
     .bmo .leg {
       position: absolute;
-      bottom: -30px;
+      bottom: -32px;
       width: 16px;
-      height: 32px;
+      height: 34px;
       background: var(--bmo-body);
-      border: 4px solid #222;
+      border: 3.5px solid #1e272e;
       border-radius: 8px;
       z-index: -1;
     }
-    .bmo .leg.l { left: 70px; }
-    .bmo .leg.r { right: 70px; }
+    .bmo .leg.l { left: 90px; }
+    .bmo .leg.r { right: 90px; }
 
-    /* BMO Screen Area */
+    .bmo .leg::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: -6px;
+      width: 24px;
+      height: 10px;
+      background: var(--bmo-body);
+      border: 3.5px solid #1e272e;
+      border-radius: 10px 10px 4px 4px;
+    }
+
     .screen {
       position: relative;
       width: 100%;
-      height: 210px;
+      height: 235px;
       background: var(--bmo-screen);
-      border: 4px solid #222;
-      border-radius: 18px;
+      border: 4px solid #1e272e;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: inset 0 0 12px rgba(0,0,0,0.15);
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.12);
     }
 
     .tv {
@@ -192,11 +245,11 @@
     }
 
     .tv-bar {
-      background: #222;
+      background: #1e272e;
       color: #fff;
       font-family: var(--font-pixel);
-      font-size: 0.65rem;
-      padding: 4px 8px;
+      font-size: 0.7rem;
+      padding: 5px 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -205,7 +258,7 @@
     .tv-right {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .tv-fs {
@@ -213,7 +266,7 @@
       border: none;
       color: #fff;
       cursor: pointer;
-      font-size: 0.7rem;
+      font-size: 0.8rem;
     }
 
     .tv-video {
@@ -237,7 +290,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.4);
+      background: rgba(0,0,0,0.45);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -257,15 +310,15 @@
     }
 
     .cover-icon {
-      font-size: 2.5rem;
+      font-size: 2.8rem;
     }
 
     .cover-text {
       font-family: var(--font-pixel);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       margin-top: 6px;
-      background: #222;
-      padding: 4px 8px;
+      background: #1e272e;
+      padding: 4px 10px;
       border-radius: 4px;
     }
 
@@ -292,8 +345,8 @@
       white-space: nowrap;
       overflow: hidden;
       font-family: var(--font-pixel);
-      font-size: 0.65rem;
-      color: #00ff66;
+      font-size: 0.7rem;
+      color: #00ff88;
     }
 
     /* BMO Face SVG Overlay */
@@ -318,9 +371,9 @@
     }
 
     .face {
-      width: 140px;
-      height: 90px;
-      fill: #222;
+      width: 150px;
+      height: 95px;
+      fill: #1e272e;
     }
 
     .face .m { display: none; }
@@ -331,31 +384,32 @@
 
     .face-text {
       font-family: var(--font-pixel);
-      font-size: 0.75rem;
-      color: #1e5a48;
-      margin-top: 6px;
+      font-size: 0.85rem;
+      color: #1a5343;
+      margin-top: 8px;
       text-align: center;
       font-weight: bold;
+      letter-spacing: 1px;
     }
 
     /* Cassette Slot Row */
     .bmo-row {
-      margin-top: 14px;
+      margin-top: 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 14px;
     }
 
     .slot {
       flex: 1;
-      height: 18px;
+      height: 20px;
       background: #111;
-      border-radius: 9px;
+      border-radius: 10px;
       position: relative;
       overflow: visible;
-      border: 3px solid #222;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+      border: 3.5px solid #1e272e;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
     }
 
     .slot-mouth {
@@ -367,13 +421,13 @@
 
     .slot-tape {
       position: absolute;
-      top: -20px;
+      top: -22px;
       left: 10%;
       width: 80%;
-      height: 16px;
+      height: 18px;
       background: #d1d5db;
-      border: 2px solid #222;
-      border-radius: 3px;
+      border: 2px solid #1e272e;
+      border-radius: 4px;
       opacity: 0;
       transform: translateY(-10px);
       transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -383,80 +437,80 @@
     aside[data-state="playing"] .slot-tape,
     aside[data-state="paused"] .slot-tape {
       opacity: 1;
-      transform: translateY(18px);
+      transform: translateY(20px);
     }
 
     .dot-blue {
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       background: var(--bmo-blue);
-      border: 3px solid #222;
+      border: 3px solid #1e272e;
       border-radius: 50%;
-      box-shadow: inset -2px -2px 0 rgba(0,0,0,0.2);
+      box-shadow: inset -2px -2px 0 rgba(0,0,0,0.25);
     }
 
     /* Controls Pad Row */
     .pad-row {
-      margin-top: 16px;
+      margin-top: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 4px;
+      padding: 0 6px;
     }
 
     /* D-Pad Control */
     .dpad {
       position: relative;
-      width: 76px;
-      height: 76px;
+      width: 90px;
+      height: 90px;
     }
 
     .dpad .d {
       position: absolute;
-      background: #333;
-      border: 2px solid #111;
+      background: var(--bmo-yellow);
+      border: 3.5px solid #1e272e;
       cursor: pointer;
-      transition: background 0.1s;
+      transition: filter 0.1s, transform 0.1s;
     }
 
-    .dpad .d:active { background: #555; }
-    .dpad .up { top: 0; left: 26px; width: 24px; height: 28px; border-radius: 6px 6px 0 0; }
-    .dpad .down { bottom: 0; left: 26px; width: 24px; height: 28px; border-radius: 0 0 6px 6px; }
-    .dpad .left { top: 26px; left: 0; width: 28px; height: 24px; border-radius: 6px 0 0 6px; }
-    .dpad .right { top: 26px; right: 0; width: 28px; height: 24px; border-radius: 0 6px 6px 0; }
-    .dpad .mid { top: 26px; left: 26px; width: 24px; height: 24px; background: #333; z-index: 2; border: none; }
+    .dpad .d:active { filter: brightness(0.9); }
+    .dpad .up { top: 0; left: 30px; width: 30px; height: 34px; border-radius: 8px 8px 0 0; border-bottom: none; }
+    .dpad .down { bottom: 0; left: 30px; width: 30px; height: 34px; border-radius: 0 0 8px 8px; border-top: none; }
+    .dpad .left { top: 30px; left: 0; width: 34px; height: 30px; border-radius: 8px 0 0 8px; border-right: none; }
+    .dpad .right { top: 30px; right: 0; width: 34px; height: 30px; border-radius: 0 8px 8px 0; border-left: none; }
+    .dpad .mid { top: 30px; left: 30px; width: 30px; height: 30px; background: var(--bmo-yellow); z-index: 2; border: none; }
 
     /* Action Buttons */
     .btns {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .b {
-      border: 3px solid #222;
+      border: 3.5px solid #1e272e;
       border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+      box-shadow: 0 4px 0 rgba(0,0,0,0.25);
       transition: transform 0.1s, box-shadow 0.1s;
       outline: none;
     }
 
     .b:active {
       transform: translateY(3px);
-      box-shadow: 0 1px 0 rgba(0,0,0,0.3);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.25);
     }
 
     .b.tri {
       width: 0;
       height: 0;
       border-style: solid;
-      border-width: 14px 0 14px 22px;
+      border-width: 18px 0 18px 28px;
       border-color: transparent transparent transparent var(--bmo-blue);
       border-radius: 0;
       background: transparent;
       box-shadow: none;
-      filter: drop-shadow(2px 3px 0px #222);
+      filter: drop-shadow(2px 3px 0px #1e272e);
       margin-right: 4px;
     }
 
@@ -469,60 +523,60 @@
     }
 
     .b.red {
-      width: 24px;
-      height: 24px;
+      width: 44px;
+      height: 44px;
       background: var(--bmo-red);
     }
 
-    /* BMO Footer Grille */
+    /* BMO Footer Line */
     .bmo-foot {
-      margin-top: 14px;
+      margin-top: 16px;
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      padding: 0 6px;
+      align-items: flex-end;
+      padding: 0 8px;
     }
 
     .grille {
       display: flex;
-      gap: 4px;
+      gap: 5px;
     }
 
     .grille i {
       display: block;
-      width: 20px;
-      height: 4px;
-      background: #222;
-      border-radius: 2px;
+      width: 22px;
+      height: 5px;
+      background: #1e272e;
+      border-radius: 3px;
     }
 
     .bmo-name {
       font-family: var(--font-pixel);
       font-weight: bold;
-      font-size: 0.85rem;
-      color: #1e5a48;
-      letter-spacing: 1px;
+      font-size: 0.9rem;
+      color: #24584a;
+      letter-spacing: 2px;
+      opacity: 0.85;
     }
 
-    /* Now Playing Info Box */
     .now {
       margin-top: 1.5rem;
       width: 100%;
-      background: #fff;
-      border: 3px solid #222;
-      border-radius: 16px;
-      padding: 12px;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+      background: #ffffff;
+      border: 2px dashed #333;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
 
     .now-tape {
-      width: 50px;
-      height: 32px;
+      width: 52px;
+      height: 36px;
       background: #222;
-      border-radius: 4px;
+      border-radius: 5px;
       flex-shrink: 0;
       position: relative;
       border: 2px solid #000;
@@ -531,10 +585,10 @@
     .now-tape::after {
       content: '';
       position: absolute;
-      top: 8px;
+      top: 9px;
       left: 10px;
       right: 10px;
-      height: 12px;
+      height: 14px;
       background: #fff;
       border-radius: 2px;
     }
@@ -545,14 +599,16 @@
     }
 
     .now-eyebrow {
-      font-size: 0.65rem;
+      font-size: 0.7rem;
       font-family: var(--font-pixel);
-      color: #888;
+      color: var(--pink-accent);
+      font-weight: bold;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .now-title {
-      font-size: 0.95rem;
+      font-size: 1.05rem;
       font-weight: 800;
       white-space: nowrap;
       overflow: hidden;
@@ -561,14 +617,15 @@
     }
 
     .now-meta {
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       color: #666;
+      line-height: 1.3;
     }
 
     .now-link {
       display: inline-block;
       margin-top: 4px;
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       color: var(--bmo-blue);
       text-decoration: none;
       font-weight: bold;
@@ -578,37 +635,37 @@
       margin-top: 1rem;
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 10px;
       justify-content: center;
       list-style: none;
-      font-size: 0.7rem;
-      color: #555;
+      font-size: 0.75rem;
+      color: #6d5b68;
     }
 
     .legend kbd {
       background: #fff;
       border: 1px solid #ccc;
       border-radius: 4px;
-      padding: 2px 5px;
+      padding: 2px 6px;
       font-family: var(--font-pixel);
-      box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+      font-size: 0.7rem;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.15);
     }
 
-    /* Cassette Rack Styling */
     section.rack {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1.8rem;
       width: 100%;
     }
 
     .cubby {
       background: var(--shelf-wood);
-      border: 4px solid #3d230d;
-      border-radius: 16px;
-      padding: 12px 16px 16px 16px;
-      box-shadow: 0 8px 0 var(--shelf-dark), 0 12px 20px rgba(0,0,0,0.15);
+      border: 6px solid var(--shelf-border);
+      border-radius: 14px;
+      padding: 14px 16px 16px 16px;
+      box-shadow: 0 10px 0 #321e0f, 0 16px 25px rgba(0,0,0,0.18);
       position: relative;
     }
 
@@ -617,57 +674,79 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
-      padding-bottom: 6px;
-      border-bottom: 2px dashed rgba(255,255,255,0.3);
+      position: relative;
+      z-index: 2;
     }
 
-    .cubby-head .tag {
-      font-family: var(--font-heading);
-      color: #fff;
-      font-size: 1.2rem;
-      text-shadow: 2px 2px 0 #222;
+    /* Tape Sticker Badges on Shelves */
+    .cubby-head .tag-tape {
+      background: #fdf1a9;
+      color: #2b1f0d;
+      font-family: var(--font-hand);
+      font-size: 1.1rem;
+      padding: 3px 12px;
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+      transform: rotate(-1.5deg);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 2px;
     }
 
-    .cubby-head .tag small {
+    .cubby-head .tag-tape small {
       font-family: var(--font-pixel);
       font-size: 0.7rem;
-      background: #222;
-      padding: 2px 6px;
-      border-radius: 4px;
-      vertical-align: middle;
-      margin-left: 6px;
+      color: #7a6128;
     }
 
-    .cubby-head .count {
+    .cubby-head .count-tag {
+      background: #ffffff;
+      color: #222;
       font-family: var(--font-pixel);
-      color: #f1c40f;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+      transform: rotate(1deg);
+      font-weight: bold;
     }
 
     .cubby-box {
-      background: rgba(0, 0, 0, 0.25);
-      border-radius: 10px;
-      padding: 12px;
-      min-height: 140px;
-      box-shadow: inset 0 4px 8px rgba(0,0,0,0.4);
+      background: var(--shelf-bg);
+      border-radius: 8px;
+      padding: 14px;
+      min-height: 160px;
+      box-shadow: inset 0 6px 12px rgba(0,0,0,0.6);
       transition: background 0.2s ease;
     }
 
     .cubby-box.drag-over {
-      background: rgba(241, 196, 15, 0.2);
+      background: rgba(241, 196, 15, 0.25);
       border: 2px dashed #f1c40f;
     }
 
+    /* 3 Column Grid for Tapes */
     .tapes {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
     }
 
-    /* Cassette Tape Button Styling */
+    @media (max-width: 650px) {
+      .tapes {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 400px) {
+      .tapes {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .tape {
       background: var(--shell, #e9edf2);
-      border: 3px solid #222;
+      border: 3px solid #1e272e;
       border-radius: 8px;
       padding: 6px;
       cursor: grab;
@@ -676,8 +755,9 @@
       flex-direction: column;
       gap: 4px;
       box-shadow: 0 4px 0 rgba(0,0,0,0.3);
-      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
       text-align: left;
+      outline: none;
     }
 
     .tape:hover {
@@ -698,7 +778,7 @@
 
     .tape.active-playing {
       border-color: #f1c40f;
-      box-shadow: 0 0 12px #f1c40f, 0 4px 0 rgba(0,0,0,0.3);
+      box-shadow: 0 0 14px #f1c40f, 0 4px 0 rgba(0,0,0,0.3);
     }
 
     .tape-shell {
@@ -709,12 +789,12 @@
 
     .tape-label {
       background: #fff;
-      border: 2px solid #222;
+      border: 2px solid #1e272e;
       border-radius: 4px;
-      padding: 4px 6px;
+      padding: 5px 6px;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
     }
 
     .tape-top {
@@ -725,35 +805,42 @@
 
     .tape-title {
       font-family: var(--font-hand);
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       color: #111;
       line-height: 1.1;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 85px;
+      max-width: 100px;
     }
 
-    .tape-side {
-      font-family: var(--font-pixel);
-      font-size: 0.65rem;
-      background: #222;
+    /* Circle Badge for Side A / B */
+    .tape-side-badge {
+      width: 16px;
+      height: 16px;
+      background: #1e272e;
       color: #fff;
-      padding: 1px 3px;
-      border-radius: 2px;
+      font-family: var(--font-pixel);
+      font-size: 0.6rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
     .tape-sub {
-      font-size: 0.6rem;
+      font-size: 0.62rem;
       color: #666;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      font-weight: 600;
     }
 
     .tape-band {
-      margin-top: 4px;
-      height: 18px;
+      margin-top: 2px;
+      height: 20px;
       background: var(--band, #5aa9e6);
       border-radius: 3px;
       display: flex;
@@ -763,21 +850,21 @@
     }
 
     .tape-window {
-      width: 70%;
+      width: 72%;
       height: 100%;
-      background: rgba(255,255,255,0.85);
-      border: 1px solid #222;
+      background: rgba(255,255,255,0.9);
+      border: 1.5px solid #1e272e;
       border-radius: 3px;
       display: flex;
       justify-content: space-around;
       align-items: center;
-      padding: 0 2px;
+      padding: 0 4px;
     }
 
     .reel {
-      width: 10px;
-      height: 10px;
-      background: #222;
+      width: 11px;
+      height: 11px;
+      background: #1e272e;
       border-radius: 50%;
       position: relative;
     }
@@ -785,15 +872,14 @@
     .reel::after {
       content: '';
       position: absolute;
-      top: 2px;
-      left: 2px;
+      top: 2.5px;
+      left: 2.5px;
       width: 6px;
       height: 6px;
       background: #fff;
       border-radius: 50%;
     }
 
-    /* Tape Spinning Animation when active */
     .tape.active-playing .reel {
       animation: spinReel 1.2s linear infinite;
     }
@@ -808,25 +894,11 @@
       border-radius: 2px;
     }
 
-    /* Drag Hint Notice */
-    .drag-hint {
-      text-align: center;
-      font-size: 0.8rem;
-      font-family: var(--font-pixel);
-      color: #666;
-      margin-top: 0.5rem;
-      background: rgba(255,255,255,0.6);
-      padding: 6px 12px;
-      border-radius: 20px;
-      border: 1px dashed #aaa;
-    }
-
-    /* Footer */
     footer.foot {
-      margin-top: 3rem;
+      margin-top: 3.5rem;
       text-align: center;
-      font-size: 0.8rem;
-      color: #666;
+      font-size: 0.82rem;
+      color: #7a6b77;
       display: flex;
       flex-direction: column;
       gap: 4px;
@@ -834,18 +906,18 @@
     }
 
     footer.foot strong {
-      color: #2c3e50;
+      color: var(--pink-accent);
     }
   </style>
 </head>
 
 <body>
   <header class="top">
-    <div>
-      <p class="eyebrow">BMO × manifest</p>
-      <h1>manifest <span>kaset rafı</span></h1>
+    <div class="header-left">
+      <p class="eyebrow">BMO × MANIFEST</p>
+      <h1>manifest <span class="pink-title">kaset rafı</span></h1>
     </div>
-    <p class="lede">Raftan bir kaset seç ya da BMO'ya sürükleyip bırak! BMO klibi kendi ekranında oynatır.</p>
+    <p class="header-right">Raftan bir kaset seç. BMO kaseti takar ve klibi kendi ekranında oynatır.</p>
   </header>
 
   <main class="app">
@@ -889,7 +961,7 @@
                 <ellipse class="m m-o" cx="80" cy="74" rx="9" ry="11"></ellipse>
                 <path class="m m-sad" d="M62 84 Q80 66 98 84"></path>
               </svg>
-              <p class="face-text" id="faceText">BİR KASET SEÇ VEYA SÜRÜKLE!</p>
+              <p class="face-text" id="faceText">BİR KASET SEÇ!</p>
             </div>
           </div>
 
@@ -919,7 +991,7 @@
 
           <div class="bmo-foot">
             <span class="grille"><i></i><i></i></span>
-            <span class="bmo-name">BMO</span>
+            <span class="bmo-name">B M O</span>
           </div>
         </div>
       </div>
@@ -930,28 +1002,26 @@
         <div class="now-info">
           <p class="now-eyebrow" id="nowEyebrow">BMO BOŞTA</p>
           <h2 class="now-title" id="nowTitle">Kaset takılı değil</h2>
-          <p class="now-meta" id="nowMeta">Raftan bir kaset seç, BMO'ya sürükle ya da mavi üçgenle başlat.</p>
+          <p class="now-meta" id="nowMeta">Raftan bir kaset seç ya da mavi üçgenle ilk kaseti başlat.</p>
           <a class="now-link" id="nowLink" target="_blank" rel="noopener" hidden>YouTube'da aç ↗</a>
         </div>
       </section>
 
       <ul class="legend">
-        <li><kbd>←</kbd><kbd>→</kbd> Kaset değiştir</li>
-        <li><kbd>↑</kbd><kbd>↓</kbd> Ses</li>
-        <li><kbd>Boşluk</kbd> Duraklat</li>
-        <li><kbd>Esc</kbd> Çıkar</li>
+        <li><kbd>←</kbd><kbd>→</kbd> kaset değiştir</li>
+        <li><kbd>↑</kbd><kbd>↓</kbd> ses</li>
+        <li><kbd>Boşluk</kbd> duraklat</li>
+        <li><kbd>Esc</kbd> çıkar</li>
       </ul>
     </aside>
 
     <!-- Cassette Shelf Side -->
     <section class="rack" id="rack" aria-label="Kaset rafı">
-      <div class="drag-hint">💡 Kasetleri tutup BMO'nun üzerine sürükleyip bırakabilirsiniz!</div>
-
       <!-- A Side Cubby -->
       <div class="cubby" id="cubbyA">
         <div class="cubby-head">
-          <span class="tag">A yüzü <small>2025</small></span>
-          <span class="count" id="countA">7 KASET</span>
+          <div class="tag-tape">A YÜZÜ <small>2025</small></div>
+          <div class="count-tag" id="countA">7 KASET</div>
         </div>
         <div class="cubby-box" data-side="A">
           <div class="tapes" id="tapesA"></div>
@@ -961,8 +1031,8 @@
       <!-- B Side Cubby -->
       <div class="cubby" id="cubbyB">
         <div class="cubby-head">
-          <span class="tag">B yüzü <small>2026</small></span>
-          <span class="count" id="countB">6 KASET</span>
+          <div class="tag-tape">B YÜZÜ <small>2026</small></div>
+          <div class="count-tag" id="countB">6 KASET</div>
         </div>
         <div class="cubby-box" data-side="B">
           <div class="tapes" id="tapesB"></div>
@@ -977,24 +1047,24 @@
   </footer>
 
   <script>
-    /* Catalog Data of Manifest Tapes */
+    /* Catalog Data of Manifest Tapes matching target design colors */
     const TAPE_CATALOG = [
       // Side A (2025)
-      { id: 'zamansizdik', side: 'A', title: 'Zamansızdık', artist: 'manifest', year: '2025', length: 'C60', ytId: 'kJQP7kiw5Fk', shell: '#e9edf2', band: '#5aa9e6' },
-      { id: 'snap', side: 'A', title: 'Snap', artist: 'manifest', year: '2025', length: 'C60', ytId: '25rL3iWvM0U', shell: '#27222c', band: '#ff5a5f' },
-      { id: 'ariyo', side: 'A', title: 'Arıyo', artist: 'manifest', year: '2025', length: 'C60', ytId: 'fJ9rUzIMcZQ', shell: '#f29a4c', band: '#ffd166' },
-      { id: 'kts', side: 'A', title: 'KTS', artist: 'manifest', year: '2025', length: 'C60', ytId: '9bZkp744fJA', shell: '#f4d24a', band: '#e5435b' },
-      { id: 'manifest', side: 'A', title: 'Manifest', artist: 'feat. Arem & Arman', year: '2025', length: 'C60', ytId: 'hT_nvWreIqq', shell: '#c5cad3', band: '#9b7bd8' },
-      { id: 'yasanacaksa', side: 'A', title: 'Yaşanacaksa', artist: 'manifest', year: '2025', length: 'C60', ytId: 'L_LUpnjgPso', shell: '#d33a4b', band: '#ffd9e1' },
-      { id: 'ruya', side: 'A', title: 'RÜYA', artist: 'manifest', year: '2025', length: 'C60', ytId: 'YQHsXMglC9A', shell: '#b8a1e8', band: '#7ad3e0' },
+      { id: 'zamansizdik', side: 'A', title: 'Zamansızdık', artist: 'MANIFEST - C60', year: '2025', ytId: 'TWo7ktEPxSg', shell: '#f4f6f8', band: '#74b9ff' },
+      { id: 'snap', side: 'A', title: 'Snap', artist: 'MANIFEST - C60', year: '2025', ytId: 'KyQCrV-z4_A', shell: '#2d3436', band: '#ff7675' },
+      { id: 'ariyo', side: 'A', title: 'Arıyo', artist: 'MANIFEST - C60', year: '2025', ytId: 'yQ9lXHfv9Yg', shell: '#e17055', band: '#fdcb6e' },
+      { id: 'kts', side: 'A', title: 'KTS', artist: 'MANIFEST - C60', year: '2025', ytId: 'yRqJ6gbkBA0', shell: '#fdcb6e', band: '#d63031' },
+      { id: 'manifest', side: 'A', title: 'Manifest', artist: 'feat. Arem & Arman', year: '2025', ytId: 'fbelrTRlls8', shell: '#b2bec3', band: '#a29bfe' },
+      { id: 'yasanacaksa', side: 'A', title: 'Yaşanacaksa', artist: 'MANIFEST - C60', year: '2025', ytId: 'zuP6l1oA3Ro', shell: '#d63031', band: '#ff7675' },
+      { id: 'ruya', side: 'A', title: 'RÜYA', artist: 'MANIFEST - C60', year: '2025', ytId: 'nB0Kdt_QQ-w', shell: '#a29bfe', band: '#74b9ff' },
 
       // Side B (2026)
-      { id: 'amator', side: 'B', title: 'Amatör', artist: 'manifest', year: '2026', length: 'C60', ytId: 'OPf0YbXqDMw', shell: '#8fd9b6', band: '#ff8fab' },
-      { id: 'basrol', side: 'B', title: 'Başrol Sensin', artist: 'manifest', year: '2026', length: 'C60', ytId: '60ItHLz5WEA', shell: '#d8b25a', band: '#24407e' },
-      { id: 'daha-iyi', side: 'B', title: 'Daha İyi', artist: 'manifest', year: '2026', length: 'C60', ytId: 'd9MyW72ELq0', shell: '#7cc3f0', band: '#fff1a8' },
-      { id: 'hileli', side: 'B', title: 'Hileli', artist: 'x Ajda Pekkan', year: '2026', length: 'C60', ytId: 'fLexgO886D8', shell: '#1d1b21', band: '#d4af37' },
-      { id: 'toz-pembe', side: 'B', title: 'Toz Pembe', artist: 'manifest', year: '2026', length: 'C60', ytId: 'CevxZvSJLk8', shell: '#f4b4c5', band: '#d93a5a' },
-      { id: 'pvg', side: 'B', title: 'pVg', artist: '& Motive & Pango', year: '2026', length: 'C60', ytId: 'L3wKzyIN1yk', shell: '#a3e264', band: '#ff6ad5' }
+      { id: 'amator', side: 'B', title: 'Amatör', artist: 'MANIFEST - C60', year: '2026', ytId: 'JzH6uWBtC3I', shell: '#55efc4', band: '#fd79a8' },
+      { id: 'basrol', side: 'B', title: 'Başrol Sensin', artist: 'MANIFEST - C60', year: '2026', ytId: 'ICfGdpZCE1Q', shell: '#e1b12c', band: '#273c75' },
+      { id: 'daha-iyi', side: 'B', title: 'Daha İyi', artist: 'MANIFEST - C60', year: '2026', ytId: 'vso1LpaQRbo', shell: '#00a8ff', band: '#fbc531' },
+      { id: 'hileli', side: 'B', title: 'Hileli', artist: 'x Ajda Pekkan - C60', year: '2026', ytId: 'kXKhNI4DLHM', shell: '#2d3436', band: '#fbc531' },
+      { id: 'toz-pembe', side: 'B', title: 'Toz Pembe', artist: 'MANIFEST - C60', year: '2026', ytId: '0pg0raFMNIU', shell: '#ef5777', band: '#f53b57' },
+      { id: 'pvg', side: 'B', title: 'pVg', artist: '& Motive & Pango - C60', year: '2026', ytId: 'EQQNb4iJVIk', shell: '#78e08f', band: '#e84393' }
     ];
 
     /* App State Variables */
@@ -1042,7 +1112,7 @@
         osc.start();
         osc.stop(audioCtx.currentTime + duration);
       } catch (e) {
-        // Audio fallback
+        // Fallback silently if audio context unavailable
       }
     }
 
@@ -1071,9 +1141,9 @@
         <span class="tape-label">
           <span class="tape-top">
             <span class="tape-title">${tape.title}</span>
-            <span class="tape-side">${tape.side}</span>
+            <span class="tape-side-badge">${tape.side}</span>
           </span>
-          <span class="tape-sub">${tape.artist} · ${tape.length}</span>
+          <span class="tape-sub">${tape.artist}</span>
           <span class="tape-band">
             <span class="tape-window">
               <span class="reel l"></span>
@@ -1084,12 +1154,10 @@
         <span class="tape-foot"></span>
       `;
 
-      /* Tape Click Event */
       btn.addEventListener('click', () => {
         loadTape(index);
       });
 
-      /* Drag Events for Cassette */
       btn.addEventListener('dragstart', (e) => {
         btn.classList.add('is-dragging');
         e.dataTransfer.setData('text/plain', index.toString());
@@ -1127,7 +1195,6 @@
     }
 
     function setupDragAndDrop() {
-      // BMO Console Drop Target
       const dropTargets = [bmoBody, consoleEl];
 
       dropTargets.forEach(target => {
@@ -1144,7 +1211,7 @@
           bmoBody.classList.remove('drag-over');
           if (activeTapeIndex === -1) {
             consoleEl.setAttribute('data-state', 'idle');
-            faceText.textContent = "BİR KASET SEÇ VEYA SÜRÜKLE!";
+            faceText.textContent = "BİR KASET SEÇ!";
           } else {
             consoleEl.setAttribute('data-state', 'playing');
           }
@@ -1162,7 +1229,6 @@
         });
       });
 
-      // Cubby Rack Drag Reordering Support
       const cubbies = document.querySelectorAll('.cubby-box');
       cubbies.forEach(cubby => {
         cubby.addEventListener('dragover', (e) => {
@@ -1225,7 +1291,6 @@
         stopProgressLoop();
       } else if (event.data === YT.PlayerState.ENDED) {
         stopProgressLoop();
-        // Auto play next track
         playNextTape();
       }
     }
@@ -1240,18 +1305,16 @@
       consoleEl.setAttribute('data-state', 'loading');
       faceText.textContent = "OYNATILIYOR...";
 
-      // Animate slot tape
       slotTape.style.background = tape.shell;
 
-      // Update UI displays
-      nowEyebrow.textContent = `YÜZLENDİ: SIDE ${tape.side} (${tape.year})`;
+      nowEyebrow.textContent = `SIDE ${tape.side} (${tape.year})`;
       nowTitle.textContent = tape.title;
-      nowMeta.textContent = `${tape.artist} · ${tape.length}`;
+      nowMeta.textContent = tape.artist;
       nowLink.href = `https://www.youtube.com/watch?v=${tape.ytId}`;
       nowLink.hidden = false;
       nowTape.style.background = tape.shell;
 
-      ticker.textContent = `▶ OYNATILIYOR: ${tape.title.toUpperCase()} - ${tape.artist.toUpperCase()}`;
+      ticker.textContent = `▶ OYNATILIYOR: ${tape.title.toUpperCase()} - MANIFEST`;
       osd.textContent = `▶ 00${index + 1}`;
 
       highlightActiveTape();
@@ -1261,13 +1324,12 @@
           player.loadVideoById(tape.ytId);
           player.playVideo();
         } else {
-          // Fallback iframe load if YT API ready state lags
           const ytContainer = document.getElementById('yt');
           ytContainer.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${tape.ytId}?autoplay=1&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
           consoleEl.setAttribute('data-state', 'playing');
           faceLayer.classList.add('hidden');
         }
-      }, 400);
+      }, 350);
     }
 
     function highlightActiveTape() {
@@ -1326,7 +1388,7 @@
 
       setTimeout(() => {
         if (activeTapeIndex === -1) {
-          faceText.textContent = "BİR KASET SEÇ VEYA SÜRÜKLE!";
+          faceText.textContent = "BİR KASET SEÇ!";
         }
       }, 1500);
     }
@@ -1356,12 +1418,11 @@
       setTimeout(() => {
         if (activeTapeIndex !== -1) {
           const tape = TAPE_CATALOG[activeTapeIndex];
-          ticker.textContent = `▶ OYNATILIYOR: ${tape.title.toUpperCase()} - ${tape.artist.toUpperCase()}`;
+          ticker.textContent = `▶ OYNATILIYOR: ${tape.title.toUpperCase()} - MANIFEST`;
         }
       }, 1200);
     }
 
-    /* Progress Seekbar Loop */
     function startProgressLoop() {
       stopProgressLoop();
       progressTimer = setInterval(() => {
@@ -1381,9 +1442,8 @@
     }
 
     function setupControls() {
-      // D-Pad and Action Buttons
       document.querySelectorAll('[data-act]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', () => {
           const act = btn.dataset.act;
           if (act === 'toggle') togglePlayPause();
           else if (act === 'eject') ejectTape();
@@ -1395,10 +1455,8 @@
         });
       });
 
-      // Cover overlay click
       cover.addEventListener('click', togglePlayPause);
 
-      // Keyboard hotkeys
       window.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight') playNextTape();
         else if (e.key === 'ArrowLeft') playPrevTape();
@@ -1410,7 +1468,6 @@
         } else if (e.key === 'Escape') ejectTape();
       });
 
-      // Seekbar click interaction
       const seek = document.getElementById('seek');
       seek.addEventListener('click', (e) => {
         if (isPlayerReady && player && player.getDuration) {
@@ -1421,7 +1478,6 @@
         }
       });
 
-      // Fullscreen button
       document.getElementById('fsBtn').addEventListener('click', () => {
         const tvVideo = document.querySelector('.tv-video');
         if (!document.fullscreenElement) {
@@ -1432,7 +1488,6 @@
       });
     }
 
-    /* App Initialization */
     window.addEventListener('DOMContentLoaded', () => {
       renderRack();
       setupDragAndDrop();
