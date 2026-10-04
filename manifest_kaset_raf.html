@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Manifest Kaset Rafı & BMO Player</title>
+  <meta name="description" content="Raftan bir manifest kaseti seç veya BMO'ya sürükle bırak. BMO klibi kendi ekranında oynatsın.">
+  
+  <!-- Typography & Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Permanent+Marker&family=Silkscreen&display=swap" rel="stylesheet">
+  
+  <!-- YouTube Iframe API Script -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <style>
+    /* Global Variables & Reset */
+    :root {
+      --bg-color: #f3efe6;
+      --bg-pattern: #e4ddcf;
+      --bmo-body: #6cbda7;
+      --bmo-shadow: #4d9c87;
+      --bmo-dark: #32695a;
+      --bmo-screen: #85d8be;
+      --bmo-yellow: #fadb48;
+      --bmo-red: #e74c3c;
+      --bmo-blue: #3498db;
+      --bmo-green: #2ecc71;
+      --shelf-wood: #a06e40;
+      --shelf-dark: #744d28;
+      --text-main: #2b2b2b;
+      --font-heading: 'Bagel Fat One', cursive, sans-serif;
+      --font-body: 'Bricolage Grotesque', sans-serif;
+      --font-hand: 'Permanent Marker', cursive;
+      --font-pixel: 'Silkscreen', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      background-image: radial-gradient(var(--bg-pattern) 15%, transparent 16%);
+      background-size: 20px 20px;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem;
+      overflow-x: hidden;
+    }
+
+    /* Header Styling */
+    header.top {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      max-width: 800px;
+    }
+
+    header.top .eyebrow {
+      font-family: var(--font-pixel);
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      color: #666;
+      text-transform: uppercase;
+    }
+
+    header.top h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      color: #2c3e50;
+      text-shadow: 3px 3px 0px #fff, 5px 5px 0px rgba(0,0,0,0.15);
+      line-height: 1.1;
+    }
+
+    header.top h1 span {
+      color: var(--bmo-shadow);
+    }
+
+    header.top .lede {
+      margin-top: 0.5rem;
+      font-size: 1rem;
+      color: #555;
+      font-weight: 600;
+    }
+
+    /* Main Grid Layout */
+    main.app {
+      display: flex;
+      flex-direction: row;
+      gap: 2rem;
+      max-width: 1200px;
+      width: 100%;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    @media (max-width: 900px) {
+      main.app {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    /* BMO Console Container */
+    aside.console {
+      width: 360px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: sticky;
+      top: 1rem;
+      z-index: 10;
+    }
+
+    /* BMO Outer Body */
+    .bmo {
+      position: relative;
+      width: 320px;
+      background: var(--bmo-body);
+      border: 5px solid #222;
+      border-radius: 28px;
+      padding: 18px 16px;
+      box-shadow: 0 12px 0 var(--bmo-shadow), 0 20px 25px rgba(0,0,0,0.25);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    /* Drop Zone Target Highlight */
+    .bmo.drag-over {
+      transform: scale(1.03);
+      border-color: #f1c40f;
+      box-shadow: 0 0 25px rgba(241, 196, 15, 0.8), 0 12px 0 var(--bmo-shadow);
+      background: #7bd4bc;
+    }
+
+    /* BMO Limbs */
+    .bmo .arm {
+      position: absolute;
+      top: 160px;
+      width: 35px;
+      height: 12px;
+      background: var(--bmo-body);
+      border: 4px solid #222;
+      border-radius: 10px;
+    }
+    .bmo .arm.l { left: -32px; transform: rotate(-25deg); transform-origin: right center; }
+    .bmo .arm.r { right: -32px; transform: rotate(25deg); transform-origin: left center; }
+
+    .bmo .leg {
+      position: absolute;
+      bottom: -30px;
+      width: 16px;
+      height: 32px;
+      background: var(--bmo-body);
+      border: 4px solid #222;
+      border-radius: 8px;
+      z-index: -1;
+    }
+    .bmo .leg.l { left: 70px; }
+    .bmo .leg.r { right: 70px; }
+
+    /* BMO Screen Area */
+    .screen {
+      position: relative;
+      width: 100%;
+      height: 210px;
+      background: var(--bmo-screen);
+      border: 4px solid #222;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.15);
+    }
+
+    .tv {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2;
+    }
+
+    .tv-bar {
+      background: #222;
+      color: #fff;
+      font-family: var(--font-pixel);
+      font-size: 0.65rem;
+      padding: 4px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tv-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tv-fs {
+      background: transparent;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+
+    .tv-video {
+      position: relative;
+      flex: 1;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #yt {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .tv-cover {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      border: none;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 5;
+    }
+
+    .tv-cover.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .cover-icon {
+      font-size: 2.5rem;
+    }
+
+    .cover-text {
+      font-family: var(--font-pixel);
+      font-size: 0.7rem;
+      margin-top: 6px;
+      background: #222;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .seek {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.3);
+      cursor: pointer;
+      z-index: 6;
+    }
+
+    .seek-fill {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--bmo-yellow);
+      transition: width 0.1s linear;
+    }
+
+    .ticker {
+      white-space: nowrap;
+      overflow: hidden;
+      font-family: var(--font-pixel);
+      font-size: 0.65rem;
+      color: #00ff66;
+    }
+
+    /* BMO Face SVG Overlay */
+    .face-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bmo-screen);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 3;
+      transition: opacity 0.3s ease;
+    }
+
+    .face-layer.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .face {
+      width: 140px;
+      height: 90px;
+      fill: #222;
+    }
+
+    .face .m { display: none; }
+    aside[data-state="idle"] .face .m-smile { display: block; }
+    aside[data-state="loading"] .face .m-o { display: block; }
+    aside[data-state="ejecting"] .face .m-sad { display: block; }
+    aside[data-state="dragover"] .face .m-o { display: block; fill: #111; }
+
+    .face-text {
+      font-family: var(--font-pixel);
+      font-size: 0.75rem;
+      color: #1e5a48;
+      margin-top: 6px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    /* Cassette Slot Row */
+    .bmo-row {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .slot {
+      flex: 1;
+      height: 18px;
+      background: #111;
+      border-radius: 9px;
+      position: relative;
+      overflow: visible;
+      border: 3px solid #222;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+    }
+
+    .slot-mouth {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .slot-tape {
+      position: absolute;
+      top: -20px;
+      left: 10%;
+      width: 80%;
+      height: 16px;
+      background: #d1d5db;
+      border: 2px solid #222;
+      border-radius: 3px;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    aside[data-state="loading"] .slot-tape,
+    aside[data-state="playing"] .slot-tape,
+    aside[data-state="paused"] .slot-tape {
+      opacity: 1;
+      transform: translateY(18px);
+    }
+
+    .dot-blue {
+      width: 16px;
+      height: 16px;
+      background: var(--bmo-blue);
+      border: 3px solid #222;
+      border-radius: 50%;
+      box-shadow: inset -2px -2px 0 rgba(0,0,0,0.2);
+    }
+
+    /* Controls Pad Row */
+    .pad-row {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px;
+    }
+
+    /* D-Pad Control */
+    .dpad {
+      position: relative;
+      width: 76px;
+      height: 76px;
+    }
+
+    .dpad .d {
+      position: absolute;
+      background: #333;
+      border: 2px solid #111;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .dpad .d:active { background: #555; }
+    .dpad .up { top: 0; left: 26px; width: 24px; height: 28px; border-radius: 6px 6px 0 0; }
+    .dpad .down { bottom: 0; left: 26px; width: 24px; height: 28px; border-radius: 0 0 6px 6px; }
+    .dpad .left { top: 26px; left: 0; width: 28px; height: 24px; border-radius: 6px 0 0 6px; }
+    .dpad .right { top: 26px; right: 0; width: 28px; height: 24px; border-radius: 0 6px 6px 0; }
+    .dpad .mid { top: 26px; left: 26px; width: 24px; height: 24px; background: #333; z-index: 2; border: none; }
+
+    /* Action Buttons */
+    .btns {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .b {
+      border: 3px solid #222;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+      transition: transform 0.1s, box-shadow 0.1s;
+      outline: none;
+    }
+
+    .b:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.3);
+    }
+
+    .b.tri {
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 14px 0 14px 22px;
+      border-color: transparent transparent transparent var(--bmo-blue);
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      filter: drop-shadow(2px 3px 0px #222);
+      margin-right: 4px;
+    }
+
+    .b.tri:active { transform: scale(0.92); }
+
+    .b.green {
+      width: 32px;
+      height: 32px;
+      background: var(--bmo-green);
+    }
+
+    .b.red {
+      width: 24px;
+      height: 24px;
+      background: var(--bmo-red);
+    }
+
+    /* BMO Footer Grille */
+    .bmo-foot {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 6px;
+    }
+
+    .grille {
+      display: flex;
+      gap: 4px;
+    }
+
+    .grille i {
+      display: block;
+      width: 20px;
+      height: 4px;
+      background: #222;
+      border-radius: 2px;
+    }
+
+    .bmo-name {
+      font-family: var(--font-pixel);
+      font-weight: bold;
+      font-size: 0.85rem;
+      color: #1e5a48;
+      letter-spacing: 1px;
+    }
+
+    /* Now Playing Info Box */
+    .now {
+      margin-top: 1.5rem;
+      width: 100%;
+      background: #fff;
+      border: 3px solid #222;
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .now-tape {
+      width: 50px;
+      height: 32px;
+      background: #222;
+      border-radius: 4px;
+      flex-shrink: 0;
+      position: relative;
+      border: 2px solid #000;
+    }
+
+    .now-tape::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      right: 10px;
+      height: 12px;
+      background: #fff;
+      border-radius: 2px;
+    }
+
+    .now-info {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .now-eyebrow {
+      font-size: 0.65rem;
+      font-family: var(--font-pixel);
+      color: #888;
+      text-transform: uppercase;
+    }
+
+    .now-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #222;
+    }
+
+    .now-meta {
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    .now-link {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 0.7rem;
+      color: var(--bmo-blue);
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .legend {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      list-style: none;
+      font-size: 0.7rem;
+      color: #555;
+    }
+
+    .legend kbd {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 2px 5px;
+      font-family: var(--font-pixel);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+    }
+
+    /* Cassette Rack Styling */
+    section.rack {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    .cubby {
+      background: var(--shelf-wood);
+      border: 4px solid #3d230d;
+      border-radius: 16px;
+      padding: 12px 16px 16px 16px;
+      box-shadow: 0 8px 0 var(--shelf-dark), 0 12px 20px rgba(0,0,0,0.15);
+      position: relative;
+    }
+
+    .cubby-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px dashed rgba(255,255,255,0.3);
+    }
+
+    .cubby-head .tag {
+      font-family: var(--font-heading);
+      color: #fff;
+      font-size: 1.2rem;
+      text-shadow: 2px 2px 0 #222;
+    }
+
+    .cubby-head .tag small {
+      font-family: var(--font-pixel);
+      font-size: 0.7rem;
+      background: #222;
+      padding: 2px 6px;
+      border-radius: 4px;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+
+    .cubby-head .count {
+      font-family: var(--font-pixel);
+      color: #f1c40f;
+      font-size: 0.75rem;
+    }
+
+    .cubby-box {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 10px;
+      padding: 12px;
+      min-height: 140px;
+      box-shadow: inset 0 4px 8px rgba(0,0,0,0.4);
+      transition: background 0.2s ease;
+    }
+
+    .cubby-box.drag-over {
+      background: rgba(241, 196, 15, 0.2);
+      border: 2px dashed #f1c40f;
+    }
+
+    .tapes {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+    }
+
+    /* Cassette Tape Button Styling */
+    .tape {
+      background: var(--shell, #e9edf2);
+      border: 3px solid #222;
+      border-radius: 8px;
+      padding: 6px;
+      cursor: grab;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+      text-align: left;
+    }
+
+    .tape:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 0 rgba(0,0,0,0.3);
+    }
+
+    .tape:active {
+      cursor: grabbing;
+      transform: translateY(0);
+      box-shadow: 0 2px 0 rgba(0,0,0,0.3);
+    }
+
+    .tape.is-dragging {
+      opacity: 0.4;
+      transform: scale(0.95);
+    }
+
+    .tape.active-playing {
+      border-color: #f1c40f;
+      box-shadow: 0 0 12px #f1c40f, 0 4px 0 rgba(0,0,0,0.3);
+    }
+
+    .tape-shell {
+      height: 4px;
+      background: rgba(0,0,0,0.15);
+      border-radius: 2px;
+    }
+
+    .tape-label {
+      background: #fff;
+      border: 2px solid #222;
+      border-radius: 4px;
+      padding: 4px 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .tape-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tape-title {
+      font-family: var(--font-hand);
+      font-size: 0.85rem;
+      color: #111;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 85px;
+    }
+
+    .tape-side {
+      font-family: var(--font-pixel);
+      font-size: 0.65rem;
+      background: #222;
+      color: #fff;
+      padding: 1px 3px;
+      border-radius: 2px;
+    }
+
+    .tape-sub {
+      font-size: 0.6rem;
+      color: #666;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tape-band {
+      margin-top: 4px;
+      height: 18px;
+      background: var(--band, #5aa9e6);
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+    }
+
+    .tape-window {
+      width: 70%;
+      height: 100%;
+      background: rgba(255,255,255,0.85);
+      border: 1px solid #222;
+      border-radius: 3px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 2px;
+    }
+
+    .reel {
+      width: 10px;
+      height: 10px;
+      background: #222;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .reel::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 6px;
+      height: 6px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    /* Tape Spinning Animation when active */
+    .tape.active-playing .reel {
+      animation: spinReel 1.2s linear infinite;
+    }
+
+    @keyframes spinReel {
+      100% { transform: rotate(360deg); }
+    }
+
+    .tape-foot {
+      height: 6px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 2px;
+    }
+
+    /* Drag Hint Notice */
+    .drag-hint {
+      text-align: center;
+      font-size: 0.8rem;
+      font-family: var(--font-pixel);
+      color: #666;
+      margin-top: 0.5rem;
+      background: rgba(255,255,255,0.6);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px dashed #aaa;
+    }
+
+    /* Footer */
+    footer.foot {
+      margin-top: 3rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #666;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-bottom: 2rem;
+    }
+
+    footer.foot strong {
+      color: #2c3e50;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="top">
+    <div>
+      <p class="eyebrow">BMO × manifest</p>
+      <h1>manifest <span>kaset rafı</span></h1>
+    </div>
+    <p class="lede">Raftan bir kaset seç ya da BMO'ya sürükleyip bırak! BMO klibi kendi ekranında oynatır.</p>
+  </header>
+
+  <main class="app">
+    <!-- BMO Console Side -->
+    <aside class="console" id="console" data-state="idle" aria-label="BMO Player">
+      <div class="bmo" id="bmoBody">
+        <span class="arm l"></span><span class="arm r"></span>
+        <span class="leg l"></span><span class="leg r"></span>
+
+        <div class="bmo-body">
+          <div class="screen">
+            <div class="tv">
+              <div class="tv-bar">
+                <span>BMO TV</span>
+                <span class="tv-right">
+                  <span id="osd">▶ 000</span>
+                  <button class="tv-fs" id="fsBtn" type="button" aria-label="Tam ekran" title="Tam ekran">⛶</button>
+                </span>
+              </div>
+              <div class="tv-video">
+                <div id="yt"></div>
+                <button class="tv-cover" id="cover" type="button" aria-label="Oynat / duraklat">
+                  <span class="cover-icon">▶</span>
+                  <span class="cover-text">OYNATMAK İÇİN TIKLA</span>
+                </button>
+                <div class="seek" id="seek" role="slider" aria-label="Klipte ileri / geri sar">
+                  <span class="seek-fill" id="seekFill"></span>
+                </div>
+              </div>
+              <div class="tv-bar"><span class="ticker"><span id="ticker">BMO HAZIR... KASET BIRAK!</span></span></div>
+            </div>
+
+            <!-- SVG BMO Expression Face Overlay -->
+            <div class="face-layer" id="faceLayer">
+              <svg class="face" viewBox="0 0 160 110" aria-hidden="true">
+                <g class="eyes">
+                  <ellipse cx="50" cy="40" rx="6" ry="8"></ellipse>
+                  <ellipse cx="110" cy="40" rx="6" ry="8"></ellipse>
+                </g>
+                <path class="m m-smile" d="M58 64 Q80 94 102 64 Z"></path>
+                <ellipse class="m m-o" cx="80" cy="74" rx="9" ry="11"></ellipse>
+                <path class="m m-sad" d="M62 84 Q80 66 98 84"></path>
+              </svg>
+              <p class="face-text" id="faceText">BİR KASET SEÇ VEYA SÜRÜKLE!</p>
+            </div>
+          </div>
+
+          <!-- BMO Slot Row -->
+          <div class="bmo-row">
+            <div class="slot" id="bmoSlot">
+              <span class="slot-mouth"><span class="slot-tape" id="slotTape"></span></span>
+            </div>
+            <span class="dot-blue" id="blueLed"></span>
+          </div>
+
+          <!-- Controls Pad -->
+          <div class="pad-row">
+            <div class="dpad">
+              <button class="d up" data-act="volup" aria-label="Sesi aç" title="Sesi aç (↑)"></button>
+              <button class="d left" data-act="prev" aria-label="Önceki kaset" title="Önceki kaset (←)"></button>
+              <span class="d mid"></span>
+              <button class="d right" data-act="next" aria-label="Sonraki kaset" title="Sonraki kaset (→)"></button>
+              <button class="d down" data-act="voldown" aria-label="Sesi kıs" title="Sesi kıs (↓)"></button>
+            </div>
+            <div class="btns">
+              <button class="b tri" data-act="toggle" aria-label="Oynat / duraklat" title="Oynat / duraklat (Boşluk)"></button>
+              <button class="b green" data-act="shuffle" aria-label="Karışık bir kaset tak" title="Rastgele Kaset Tak"></button>
+              <button class="b red" data-act="eject" aria-label="Kaseti çıkar" title="Kaseti çıkar (Esc)"></button>
+            </div>
+          </div>
+
+          <div class="bmo-foot">
+            <span class="grille"><i></i><i></i></span>
+            <span class="bmo-name">BMO</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Now Playing Box -->
+      <section class="now" aria-live="polite">
+        <div class="now-tape" id="nowTape"></div>
+        <div class="now-info">
+          <p class="now-eyebrow" id="nowEyebrow">BMO BOŞTA</p>
+          <h2 class="now-title" id="nowTitle">Kaset takılı değil</h2>
+          <p class="now-meta" id="nowMeta">Raftan bir kaset seç, BMO'ya sürükle ya da mavi üçgenle başlat.</p>
+          <a class="now-link" id="nowLink" target="_blank" rel="noopener" hidden>YouTube'da aç ↗</a>
+        </div>
+      </section>
+
+      <ul class="legend">
+        <li><kbd>←</kbd><kbd>→</kbd> Kaset değiştir</li>
+        <li><kbd>↑</kbd><kbd>↓</kbd> Ses</li>
+        <li><kbd>Boşluk</kbd> Duraklat</li>
+        <li><kbd>Esc</kbd> Çıkar</li>
+      </ul>
+    </aside>
+
+    <!-- Cassette Shelf Side -->
+    <section class="rack" id="rack" aria-label="Kaset rafı">
+      <div class="drag-hint">💡 Kasetleri tutup BMO'nun üzerine sürükleyip bırakabilirsiniz!</div>
+
+      <!-- A Side Cubby -->
+      <div class="cubby" id="cubbyA">
+        <div class="cubby-head">
+          <span class="tag">A yüzü <small>2025</small></span>
+          <span class="count" id="countA">7 KASET</span>
+        </div>
+        <div class="cubby-box" data-side="A">
+          <div class="tapes" id="tapesA"></div>
+        </div>
+      </div>
+
+      <!-- B Side Cubby -->
+      <div class="cubby" id="cubbyB">
+        <div class="cubby-head">
+          <span class="tag">B yüzü <small>2026</small></span>
+          <span class="count" id="countB">6 KASET</span>
+        </div>
+        <div class="cubby-box" data-side="B">
+          <div class="tapes" id="tapesB"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p class="credit">Created by <strong>Oğulcan</strong></p>
+    <p>Hayran işi. Klipler manifest'in YouTube kanallarından oynar; BMO, Adventure Time'dan.</p>
+  </footer>
+
+  <script>
+    /* Catalog Data of Manifest Tapes */
+    const TAPE_CATALOG = [
+      // Side A (2025)
+      { id: 'zamansizdik', side: 'A', title: 'Zamansızdık', artist: 'manifest', year: '2025', length: 'C60', ytId: 'kJQP7kiw5Fk', shell: '#e9edf2', band: '#5aa9e6' },
+      { id: 'snap', side: 'A', title: 'Snap', artist: 'manifest', year: '2025', length: 'C60', ytId: '25rL3iWvM0U', shell: '#27222c', band: '#ff5a5f' },
+      { id: 'ariyo', side: 'A', title: 'Arıyo', artist: 'manifest', year: '2025', length: 'C60', ytId: 'fJ9rUzIMcZQ', shell: '#f29a4c', band: '#ffd166' },
+      { id: 'kts', side: 'A', title: 'KTS', artist: 'manifest', year: '2025', length: 'C60', ytId: '9bZkp744fJA', shell: '#f4d24a', band: '#e5435b' },
+      { id: 'manifest', side: 'A', title: 'Manifest', artist: 'feat. Arem & Arman', year: '2025', length: 'C60', ytId: 'hT_nvWreIqq', shell: '#c5cad3', band: '#9b7bd8' },
+      { id: 'yasanacaksa', side: 'A', title: 'Yaşanacaksa', artist: 'manifest', year: '2025', length: 'C60', ytId: 'L_LUpnjgPso', shell: '#d33a4b', band: '#ffd9e1' },
+      { id: 'ruya', side: 'A', title: 'RÜYA', artist: 'manifest', year: '2025', length: 'C60', ytId: 'YQHsXMglC9A', shell: '#b8a1e8', band: '#7ad3e0' },
+
+      // Side B (2026)
+      { id: 'amator', side: 'B', title: 'Amatör', artist: 'manifest', year: '2026', length: 'C60', ytId: 'OPf0YbXqDMw', shell: '#8fd9b6', band: '#ff8fab' },
+      { id: 'basrol', side: 'B', title: 'Başrol Sensin', artist: 'manifest', year: '2026', length: 'C60', ytId: '60ItHLz5WEA', shell: '#d8b25a', band: '#24407e' },
+      { id: 'daha-iyi', side: 'B', title: 'Daha İyi', artist: 'manifest', year: '2026', length: 'C60', ytId: 'd9MyW72ELq0', shell: '#7cc3f0', band: '#fff1a8' },
+      { id: 'hileli', side: 'B', title: 'Hileli', artist: 'x Ajda Pekkan', year: '2026', length: 'C60', ytId: 'fLexgO886D8', shell: '#1d1b21', band: '#d4af37' },
+      { id: 'toz-pembe', side: 'B', title: 'Toz Pembe', artist: 'manifest', year: '2026', length: 'C60', ytId: 'CevxZvSJLk8', shell: '#f4b4c5', band: '#d93a5a' },
+      { id: 'pvg', side: 'B', title: 'pVg', artist: '& Motive & Pango', year: '2026', length: 'C60', ytId: 'L3wKzyIN1yk', shell: '#a3e264', band: '#ff6ad5' }
+    ];
+
+    /* App State Variables */
+    let activeTapeIndex = -1;
+    let player = null;
+    let isPlayerReady = false;
+    let progressTimer = null;
+    let volume = 80;
+    let audioCtx = null;
+
+    /* DOM Elements */
+    const consoleEl = document.getElementById('console');
+    const bmoBody = document.getElementById('bmoBody');
+    const faceLayer = document.getElementById('faceLayer');
+    const faceText = document.getElementById('faceText');
+    const ticker = document.getElementById('ticker');
+    const osd = document.getElementById('osd');
+    const cover = document.getElementById('cover');
+    const seekFill = document.getElementById('seekFill');
+    const nowEyebrow = document.getElementById('nowEyebrow');
+    const nowTitle = document.getElementById('nowTitle');
+    const nowMeta = document.getElementById('nowMeta');
+    const nowLink = document.getElementById('nowLink');
+    const nowTape = document.getElementById('nowTape');
+    const slotTape = document.getElementById('slotTape');
+    const tapesAContainer = document.getElementById('tapesA');
+    const tapesBContainer = document.getElementById('tapesB');
+
+    function playBeep(freq = 440, type = 'sine', duration = 0.1) {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        // Audio fallback
+      }
+    }
+
+    function playCassetteInsertSound() {
+      playBeep(220, 'triangle', 0.1);
+      setTimeout(() => playBeep(330, 'square', 0.15), 100);
+    }
+
+    function playEjectSound() {
+      playBeep(300, 'sawtooth', 0.12);
+      setTimeout(() => playBeep(180, 'triangle', 0.15), 90);
+    }
+
+    function createTapeElement(tape, index) {
+      const btn = document.createElement('button');
+      btn.className = 'tape';
+      btn.type = 'button';
+      btn.draggable = true;
+      btn.dataset.index = index;
+      btn.setAttribute('aria-label', `${tape.title} klibini BMO'da oynat`);
+      btn.style.setProperty('--shell', tape.shell);
+      btn.style.setProperty('--band', tape.band);
+
+      btn.innerHTML = `
+        <span class="tape-shell"></span>
+        <span class="tape-label">
+          <span class="tape-top">
+            <span class="tape-title">${tape.title}</span>
+            <span class="tape-side">${tape.side}</span>
+          </span>
+          <span class="tape-sub">${tape.artist} · ${tape.length}</span>
+          <span class="tape-band">
+            <span class="tape-window">
+              <span class="reel l"></span>
+              <span class="reel r"></span>
+            </span>
+          </span>
+        </span>
+        <span class="tape-foot"></span>
+      `;
+
+      /* Tape Click Event */
+      btn.addEventListener('click', () => {
+        loadTape(index);
+      });
+
+      /* Drag Events for Cassette */
+      btn.addEventListener('dragstart', (e) => {
+        btn.classList.add('is-dragging');
+        e.dataTransfer.setData('text/plain', index.toString());
+        e.dataTransfer.effectAllowed = 'copyMove';
+        playBeep(520, 'sine', 0.05);
+      });
+
+      btn.addEventListener('dragend', () => {
+        btn.classList.remove('is-dragging');
+      });
+
+      return btn;
+    }
+
+    function renderRack() {
+      tapesAContainer.innerHTML = '';
+      tapesBContainer.innerHTML = '';
+
+      let countA = 0;
+      let countB = 0;
+
+      TAPE_CATALOG.forEach((tape, index) => {
+        const tapeEl = createTapeElement(tape, index);
+        if (tape.side === 'A') {
+          tapesAContainer.appendChild(tapeEl);
+          countA++;
+        } else {
+          tapesBContainer.appendChild(tapeEl);
+          countB++;
+        }
+      });
+
+      document.getElementById('countA').textContent = `${countA} KASET`;
+      document.getElementById('countB').textContent = `${countB} KASET`;
+    }
+
+    function setupDragAndDrop() {
+      // BMO Console Drop Target
+      const dropTargets = [bmoBody, consoleEl];
+
+      dropTargets.forEach(target => {
+        target.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'copy';
+          bmoBody.classList.add('drag-over');
+          consoleEl.setAttribute('data-state', 'dragover');
+          faceText.textContent = "BANA BIRAK!";
+        });
+
+        target.addEventListener('dragleave', (e) => {
+          e.preventDefault();
+          bmoBody.classList.remove('drag-over');
+          if (activeTapeIndex === -1) {
+            consoleEl.setAttribute('data-state', 'idle');
+            faceText.textContent = "BİR KASET SEÇ VEYA SÜRÜKLE!";
+          } else {
+            consoleEl.setAttribute('data-state', 'playing');
+          }
+        });
+
+        target.addEventListener('drop', (e) => {
+          e.preventDefault();
+          bmoBody.classList.remove('drag-over');
+          const tapeIdxRaw = e.dataTransfer.getData('text/plain');
+          const tapeIdx = parseInt(tapeIdxRaw, 10);
+
+          if (!isNaN(tapeIdx) && tapeIdx >= 0 && tapeIdx < TAPE_CATALOG.length) {
+            loadTape(tapeIdx);
+          }
+        });
+      });
+
+      // Cubby Rack Drag Reordering Support
+      const cubbies = document.querySelectorAll('.cubby-box');
+      cubbies.forEach(cubby => {
+        cubby.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          cubby.classList.add('drag-over');
+        });
+
+        cubby.addEventListener('dragleave', () => {
+          cubby.classList.remove('drag-over');
+        });
+
+        cubby.addEventListener('drop', (e) => {
+          e.preventDefault();
+          cubby.classList.remove('drag-over');
+          const tapeIdx = parseInt(e.dataTransfer.getData('text/plain'), 10);
+          const targetSide = cubby.dataset.side;
+
+          if (!isNaN(tapeIdx) && TAPE_CATALOG[tapeIdx]) {
+            TAPE_CATALOG[tapeIdx].side = targetSide;
+            renderRack();
+            highlightActiveTape();
+            playBeep(380, 'sine', 0.08);
+          }
+        });
+      });
+    }
+
+    window.onYouTubeIframeAPIReady = function() {
+      player = new YT.Player('yt', {
+        height: '100%',
+        width: '100%',
+        playerVars: {
+          'autoplay': 1,
+          'controls': 0,
+          'rel': 0,
+          'modestbranding': 1,
+          'playsinline': 1
+        },
+        events: {
+          'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    };
+
+    function onPlayerReady(event) {
+      isPlayerReady = true;
+      player.setVolume(volume);
+    }
+
+    function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.PLAYING) {
+        consoleEl.setAttribute('data-state', 'playing');
+        faceLayer.classList.add('hidden');
+        cover.classList.remove('active');
+        startProgressLoop();
+      } else if (event.data === YT.PlayerState.PAUSED) {
+        consoleEl.setAttribute('data-state', 'paused');
+        cover.classList.add('active');
+        stopProgressLoop();
+      } else if (event.data === YT.PlayerState.ENDED) {
+        stopProgressLoop();
+        // Auto play next track
+        playNextTape();
+      }
+    }
+
+    function loadTape(index) {
+      if (index < 0 || index >= TAPE_CATALOG.length) return;
+
+      activeTapeIndex = index;
+      const tape = TAPE_CATALOG[index];
+
+      playCassetteInsertSound();
+      consoleEl.setAttribute('data-state', 'loading');
+      faceText.textContent = "OYNATILIYOR...";
+
+      // Animate slot tape
+      slotTape.style.background = tape.shell;
+
+      // Update UI displays
+      nowEyebrow.textContent = `YÜZLENDİ: SIDE ${tape.side} (${tape.year})`;
+      nowTitle.textContent = tape.title;
+      nowMeta.textContent = `${tape.artist} · ${tape.length}`;
+      nowLink.href = `https://www.youtube.com/watch?v=${tape.ytId}`;
+      nowLink.hidden = false;
+      nowTape.style.background = tape.shell;
+
+      ticker.textContent = `▶ OYNATILIYOR: ${tape.title.toUpperCase()} - ${tape.artist.toUpperCase()}`;
+      osd.textContent = `▶ 00${index + 1}`;
+
+      highlightActiveTape();
+
+      setTimeout(() => {
+        if (isPlayerReady && player && player.loadVideoById) {
+          player.loadVideoById(tape.ytId);
+          player.playVideo();
+        } else {
+          // Fallback iframe load if YT API ready state lags
+          const ytContainer = document.getElementById('yt');
+          ytContainer.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${tape.ytId}?autoplay=1&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+          consoleEl.setAttribute('data-state', 'playing');
+          faceLayer.classList.add('hidden');
+        }
+      }, 400);
+    }
+
+    function highlightActiveTape() {
+      document.querySelectorAll('.tape').forEach(t => {
+        const idx = parseInt(t.dataset.index, 10);
+        if (idx === activeTapeIndex) {
+          t.classList.add('active-playing');
+        } else {
+          t.classList.remove('active-playing');
+        }
+      });
+    }
+
+    function togglePlayPause() {
+      if (activeTapeIndex === -1) {
+        loadTape(0);
+        return;
+      }
+
+      if (isPlayerReady && player) {
+        const state = player.getPlayerState();
+        if (state === YT.PlayerState.PLAYING) {
+          player.pauseVideo();
+        } else {
+          player.playVideo();
+        }
+      }
+    }
+
+    function ejectTape() {
+      if (activeTapeIndex === -1) return;
+
+      playEjectSound();
+      activeTapeIndex = -1;
+
+      if (isPlayerReady && player && player.stopVideo) {
+        player.stopVideo();
+      }
+
+      consoleEl.setAttribute('data-state', 'idle');
+      faceLayer.classList.remove('hidden');
+      faceText.textContent = "KASET ÇIKARILDI!";
+
+      nowEyebrow.textContent = "BMO BOŞTA";
+      nowTitle.textContent = "Kaset takılı değil";
+      nowMeta.textContent = "Raftan bir kaset seç ya da mavi üçgenle ilk kaseti başlat.";
+      nowLink.hidden = true;
+      nowTape.style.background = "#222";
+
+      ticker.textContent = "BMO HAZIR... KASET BIRAK!";
+      osd.textContent = "▶ 000";
+      seekFill.style.width = "0%";
+
+      highlightActiveTape();
+      stopProgressLoop();
+
+      setTimeout(() => {
+        if (activeTapeIndex === -1) {
+          faceText.textContent = "BİR KASET SEÇ VEYA SÜRÜKLE!";
+        }
+      }, 1500);
+    }
+
+    function playNextTape() {
+      const nextIdx = (activeTapeIndex + 1) % TAPE_CATALOG.length;
+      loadTape(nextIdx);
+    }
+
+    function playPrevTape() {
+      const prevIdx = (activeTapeIndex - 1 + TAPE_CATALOG.length) % TAPE_CATALOG.length;
+      loadTape(prevIdx);
+    }
+
+    function playShuffleTape() {
+      const randomIdx = Math.floor(Math.random() * TAPE_CATALOG.length);
+      loadTape(randomIdx);
+    }
+
+    function adjustVolume(delta) {
+      volume = Math.max(0, Math.min(100, volume + delta));
+      if (isPlayerReady && player) {
+        player.setVolume(volume);
+      }
+      playBeep(400 + volume * 2, 'sine', 0.05);
+      ticker.textContent = `SES DÜZEYİ: %${volume}`;
+      setTimeout(() => {
+        if (activeTapeIndex !== -1) {
+          const tape = TAPE_CATALOG[activeTapeIndex];
+          ticker.textContent = `▶ OYNATILIYOR: ${tape.title.toUpperCase()} - ${tape.artist.toUpperCase()}`;
+        }
+      }, 1200);
+    }
+
+    /* Progress Seekbar Loop */
+    function startProgressLoop() {
+      stopProgressLoop();
+      progressTimer = setInterval(() => {
+        if (isPlayerReady && player && player.getCurrentTime && player.getDuration) {
+          const currentTime = player.getCurrentTime();
+          const duration = player.getDuration();
+          if (duration > 0) {
+            const pct = (currentTime / duration) * 100;
+            seekFill.style.width = `${pct}%`;
+          }
+        }
+      }, 500);
+    }
+
+    function stopProgressLoop() {
+      if (progressTimer) clearInterval(progressTimer);
+    }
+
+    function setupControls() {
+      // D-Pad and Action Buttons
+      document.querySelectorAll('[data-act]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const act = btn.dataset.act;
+          if (act === 'toggle') togglePlayPause();
+          else if (act === 'eject') ejectTape();
+          else if (act === 'next') playNextTape();
+          else if (act === 'prev') playPrevTape();
+          else if (act === 'shuffle') playShuffleTape();
+          else if (act === 'volup') adjustVolume(10);
+          else if (act === 'voldown') adjustVolume(-10);
+        });
+      });
+
+      // Cover overlay click
+      cover.addEventListener('click', togglePlayPause);
+
+      // Keyboard hotkeys
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') playNextTape();
+        else if (e.key === 'ArrowLeft') playPrevTape();
+        else if (e.key === 'ArrowUp') adjustVolume(10);
+        else if (e.key === 'ArrowDown') adjustVolume(-10);
+        else if (e.key === ' ') {
+          e.preventDefault();
+          togglePlayPause();
+        } else if (e.key === 'Escape') ejectTape();
+      });
+
+      // Seekbar click interaction
+      const seek = document.getElementById('seek');
+      seek.addEventListener('click', (e) => {
+        if (isPlayerReady && player && player.getDuration) {
+          const rect = seek.getBoundingClientRect();
+          const pos = (e.clientX - rect.left) / rect.width;
+          const duration = player.getDuration();
+          player.seekTo(pos * duration, true);
+        }
+      });
+
+      // Fullscreen button
+      document.getElementById('fsBtn').addEventListener('click', () => {
+        const tvVideo = document.querySelector('.tv-video');
+        if (!document.fullscreenElement) {
+          tvVideo.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen();
+        }
+      });
+    }
+
+    /* App Initialization */
+    window.addEventListener('DOMContentLoaded', () => {
+      renderRack();
+      setupDragAndDrop();
+      setupControls();
+    });
+  </script>
+</body>
+</html>
